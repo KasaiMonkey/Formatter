@@ -112,7 +112,7 @@
               }).then((unityInstance) => {
                 document.querySelector("#unity-loading-bar").style.display = "none";
                 document.querySelector("#unity-fullscreen-button").onclick = () => {
-                  document.makeFullscreen('unity-container');
+                  unityInstance.SetFullscreen(1);
                 };
 
               }).catch((message) => {

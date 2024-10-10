@@ -47,13 +47,14 @@
             border-radius: 4px;
             background-color: #f9f9f9;
             white-space: pre-wrap; /* Preserves whitespace in the embedded code */
+            display: none; /* Hide initially */
         }
     </style>
 </head>
 <body>
 
     <h1>Masaya's Code Snippet To HTML Converter</h1>
-    <h2>Version 0.7</h2>
+    <h2>Version 0.8</h2>
     
     <!-- Input Field -->
     <textarea id="inputField" placeholder="Type/Paste your code here..."></textarea>
@@ -63,7 +64,7 @@
     <div id="errorNotification">Error: Unable to fetch start or end lines. Please check the URLs.</div> <!-- Error message -->
     
     <!-- Embedded Code Display -->
-    <div id="embeddedCode" style="display: none;"></div>
+    <div id="embeddedCode"></div>
 
     <script>
         document.getElementById('copyButton').addEventListener('click', function() {

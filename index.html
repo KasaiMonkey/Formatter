@@ -3,115 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Copy Code to Clipboard with Tabs Preserved</title>
+    <title>Masaya's Code2HTML - V1.0</title>
+    <link rel="stylesheet" href="https://kasaimonkey.github.io/Formatter/MasayaStyle.css">
+    <link rel="stylesheet" href="https://kasaimonkey.github.io/Formatter/MasayaLineStyle.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+        }
+        #inputField {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        #codeBlock {
+            background-color: #282c34;
+            border-radius: 5px;
+            padding: 15px;
+            overflow: auto;
+            margin-top: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        pre {
+            margin: 0;
+            padding: 0;
+        }
+        .hljs {
+            color: #f8f8f2;
+            background: #282c34;
         }
         button {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #notification {
-            margin-top: 10px;
-            color: green;
-            display: none; /* Hide the notification initially */
-        }
-        #errorNotification {
-            margin-top: 10px;
-            color: red;
-            display: none; /* Hide error notification initially */
-        }
-        textarea {
-            width: 100%;
-            height: 100px; /* Adjust height as needed */
-            margin-top: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-family: monospace; /* Use monospace font for better code display */
-            white-space: pre; /* Ensures tabs and spaces are preserved */
-        }
-        #embeddedCode {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-            white-space: pre-wrap; /* Preserves whitespace in the embedded code */
-            display: none; /* Hide initially */
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Masaya's Code Snippet To HTML Converter</h1>
-    <h2>Version 0.8</h2>
-    
-    <!-- Input Field -->
-    <textarea id="inputField" placeholder="Type/Paste your code here..."></textarea>
-    
-    <button id="copyButton">Convert Code To HTML</button>
-    <div id="notification">Text copied to clipboard!</div> <!-- Notification message -->
-    <div id="errorNotification">Error: Unable to fetch start or end lines. Please check the URLs.</div> <!-- Error message -->
-    
-    <!-- Embedded Code Display -->
-    <div id="embeddedCode"></div>
+<h1>Real-Time Code Editor</h1>
 
-    <script>
-        document.getElementById('copyButton').addEventListener('click', function() {
-            // URLs for the online start and end parts
-            var startURL = 'https://kasaimonkey.github.io/Formatter/start-lines.txt';
-            var endURL = 'https://kasaimonkey.github.io/Formatter/end-lines.txt';
+<!-- Input Field -->
+<textarea id="inputField" placeholder="Type or paste your C# code here..."></textarea>
 
-            // Fetch the start and end lines
-            Promise.all([fetch(startURL).then(res => res.text()), fetch(endURL).then(res => res.text())])
-                .then(([startLines, endLines]) => {
-                    // Get the text from the input field
-                    var inputText = document.getElementById('inputField').value;
+<!-- Copy Button -->
+<button id="copyButton">Copy as HTML</button>
 
-                    // Create a temporary textarea element to help copy the text
-                    var tempTextArea = document.createElement("textarea");
-                    // Concatenate the start lines, input text, and end lines with a line break
-                    tempTextArea.value = startLines + inputText + '\n' + endLines;
+<!-- Code Display -->
+<div id="codeBlock">
+    <pre><code class="language-C#">Add Code...</code></pre>
+</div>
 
-                    // Append the textarea to the body, copy its content, and then remove it
-                    document.body.appendChild(tempTextArea);
-                    tempTextArea.select();
-                    document.execCommand("copy");
-                    document.body.removeChild(tempTextArea);
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+    const inputField = document.getElementById('inputField');
+    const codeBlock = document.querySelector('#codeBlock code');
+    const copyButton = document.getElementById('copyButton');
 
-                    // Show notification when copied
-                    var notification = document.getElementById('notification');
-                    notification.style.display = 'block';
-                    notification.textContent = "Text copied to clipboard!";
+    // Function to reset and highlight the code block
+    function resetCodeBlock(code) {
+        // Clear the code block and add a new code element
+        const pre = document.createElement('pre');
+        const newCode = document.createElement('code');
+        newCode.className = 'language-C#'; // Set the language
+        newCode.textContent = code;
 
-                    // Display the copied text as embedded code
-                    var embeddedCode = document.getElementById('embeddedCode');
-                    embeddedCode.textContent = tempTextArea.value; // Use the copied text
-                    embeddedCode.style.display = 'block'; // Show the embedded code display
+        pre.appendChild(newCode);
+        codeBlock.innerHTML = ''; // Clear existing code block
+        codeBlock.appendChild(pre); // Add the new code element
 
-                    // Hide error notification if it was previously shown
-                    document.getElementById('errorNotification').style.display = 'none';
-                })
-                .catch(error => {
-                    console.error("Error fetching start or end lines:", error);
+        // Highlight the new code
+        hljs.highlightElement(newCode);
+    }
 
-                    // Show error notification
-                    var errorNotification = document.getElementById('errorNotification');
-                    errorNotification.style.display = 'block';
-                    errorNotification.textContent = "Error: Unable to fetch start or end lines. Please check the URLs.";
-                });
-        });
-    </script>
+    // Initial rendering with "Add Code"
+    resetCodeBlock('Add Code...');
+
+    // Event listener for input changes
+    inputField.addEventListener('input', function() {
+        const codeValue = inputField.value || 'Add code...';
+        resetCodeBlock(codeValue); // Reset and highlight new code
+    });
+
+    // Function to fetch URLs and copy to clipboard
+    async function fetchAndCopy() {
+        const startlineUrl = 'https://kasaimonkey.github.io/Formatter/start-lines.txt';
+        const endlineUrl = 'https://kasaimonkey.github.io/Formatter/end-lines.txt';
+
+        try {
+            const [startlineResponse, endlineResponse] = await Promise.all([
+                fetch(startlineUrl),
+                fetch(endlineUrl)
+            ]);
+
+            const startline = await startlineResponse.text();
+            const endline = await endlineResponse.text();
+            const inputText = inputField.value;
+
+            // Combine the strings
+            const finalText = `${startline}${inputText}\n${endline}`;
+
+            // Copy to clipboard
+            await navigator.clipboard.writeText(finalText);
+            alert('Copied to clipboard!');
+        } catch (error) {
+            console.error('Error fetching the lines:', error);
+            alert('Failed to copy text. Please try again.');
+        }
+    }
+
+    // Add event listener to the copy button
+    copyButton.addEventListener('click', fetchAndCopy);
+</script>
 
 </body>
 </html>

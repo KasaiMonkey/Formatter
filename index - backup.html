@@ -34,28 +34,12 @@
             border-radius: 4px;
             font-family: monospace; /* Use monospace font for better code display */
         }
-        /* Loading screen styles */
-        #loadingScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            color: #333;
-            z-index: 9999;
-            display: none; /* Hidden initially */
-        }
     </style>
 </head>
 <body>
 
     <h1>Masaya's Code Snippet To HTML Converter</h1>
-    <h2>Version 0.3</h2>
+    <h2>Version 0.2a</h2>
     
     <!-- Input Field -->
     <textarea id="inputField" placeholder="Type/Paste your code here..."></textarea>
@@ -64,29 +48,7 @@
     <button id="copyButton">Convert Code To HTML</button>
     <div id="notification">Text copied to clipboard!</div> <!-- Notification message -->
 
-    <!-- Loading screen -->
-    <div id="loadingScreen">Loading...</div>
-
     <script>
-        // Show loading screen
-        function showLoading() {
-            document.getElementById('loadingScreen').style.display = 'flex';
-        }
-
-        // Hide loading screen
-        function hideLoading() {
-            document.getElementById('loadingScreen').style.display = 'none';
-        }
-
-        // Function to fetch content from an external file
-        async function fetchContent(url) {
-            showLoading(); // Show loading screen
-            const response = await fetch(url);
-            const text = await response.text();
-            hideLoading(); // Hide loading screen
-            return text;
-        }
-
         document.getElementById('replaceButton').addEventListener('click', function() {
             // Get the text from the input field
             var inputText = document.getElementById('inputField').value;
@@ -99,20 +61,38 @@
             document.getElementById('inputField').value = replacedText;
         });
 
-        document.getElementById('copyButton').addEventListener('click', async function() {
-            // Fetch start and end lines from online files
-            const startLines = await fetchContent('https://kasaimonkey.github.io/Formatter/start-lines.txt');
-            const endLines = await fetchContent('https://kasaimonkey.github.io/Formatter/end-lines.txt');
+        document.getElementById('copyButton').addEventListener('click', function() {
+            // Variables for the lines to copy
+            var lineToCopy = `<link rel="stylesheet" href="https://kasaimonkey.github.io/Formatter/MasayaStyle.css">`;
+	    var lineToCopy1 = `<link rel="stylesheet" href="https://kasaimonkey.github.io/Formatter/MasayaLineStyle.css">`;
+            var lineToCopy2 = `<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></scr`;
+            var lineToCopy2b = 'ipt>';
+            var lineToCopy3 = '<pre><code class="language-C#">';
+            var endLine1 = `</code></pre>`;
+            var endLine2 = `<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></scr`;
+            var endLine2b = `ipt>`;
+            var endLine3 = `<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></scr`;
+            var endLine3b = `ipt>`;
+            var endLine4 = `<script src="//cdn.jsdelivr.net/npm/highlightjs-line-numbers.js@2.8.0/dist/highlightjs-line-numbers.min.js"></scr`;
+            var endLine4b = `ipt>`;
+            var endLine5 = `<script>hljs.highlightAll();</scr`;
+            var endLine5b = `ipt>`;
+            var endLine6 = `<script>hljs.initLineNumbersOnLoad({startFrom: 1});</scr`;
+            var endLine6b = `ipt>`;
 
-            // Get the user input from the input field
-            const userInput = document.getElementById('inputField').value;
-
-            // Combine start lines, user input, and end lines
-            const fullHTML = startLines + '\n' + userInput + '\n' + endLines;
+            // Get the text from the input field
+            var inputText = document.getElementById('inputField').value;
 
             // Create a temporary textarea element to help copy the text
-            const tempTextArea = document.createElement("textarea");
-            tempTextArea.value = fullHTML;
+            var tempTextArea = document.createElement("textarea");
+            tempTextArea.value = lineToCopy + '\n' + lineToCopy1 + '\n' + lineToCopy2 + lineToCopy2b + '\n' + 
+                                  lineToCopy3 + inputText + '\n' +
+                                  endLine1 + '\n' +
+                                  endLine2 + endLine2b + '\n' +
+                                  endLine3 + endLine3b + '\n' +
+                                  endLine4 + endLine4b + '\n' +
+                                  endLine5 + endLine5b + '\n' +
+                                  endLine6 + endLine6b; 
             document.body.appendChild(tempTextArea); // Append it to the body
             tempTextArea.select(); // Select the text
             document.execCommand("copy"); // Execute the copy command

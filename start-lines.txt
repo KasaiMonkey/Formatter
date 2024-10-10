@@ -1,0 +1,4 @@
+<link rel="stylesheet" href="https://kasaimonkey.github.io/Formatter/MasayaStyle.cs">
+<link rel="stylesheet" href="https://kasaimonkey.github.io/Formatter/MasayaLineStyle.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<pre><code class="language-C#">

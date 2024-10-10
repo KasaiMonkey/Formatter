@@ -40,12 +40,20 @@
             font-family: monospace; /* Use monospace font for better code display */
             white-space: pre; /* Ensures tabs and spaces are preserved */
         }
+        #embeddedCode {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            white-space: pre-wrap; /* Preserves whitespace in the embedded code */
+        }
     </style>
 </head>
 <body>
 
     <h1>Masaya's Code Snippet To HTML Converter</h1>
-    <h2>Version 0.6</h2>
+    <h2>Version 0.7</h2>
     
     <!-- Input Field -->
     <textarea id="inputField" placeholder="Type/Paste your code here..."></textarea>
@@ -53,6 +61,9 @@
     <button id="copyButton">Convert Code To HTML</button>
     <div id="notification">Text copied to clipboard!</div> <!-- Notification message -->
     <div id="errorNotification">Error: Unable to fetch start or end lines. Please check the URLs.</div> <!-- Error message -->
+    
+    <!-- Embedded Code Display -->
+    <div id="embeddedCode" style="display: none;"></div>
 
     <script>
         document.getElementById('copyButton').addEventListener('click', function() {
@@ -81,6 +92,11 @@
                     var notification = document.getElementById('notification');
                     notification.style.display = 'block';
                     notification.textContent = "Text copied to clipboard!";
+
+                    // Display the copied text as embedded code
+                    var embeddedCode = document.getElementById('embeddedCode');
+                    embeddedCode.textContent = tempTextArea.value; // Use the copied text
+                    embeddedCode.style.display = 'block'; // Show the embedded code display
 
                     // Hide error notification if it was previously shown
                     document.getElementById('errorNotification').style.display = 'none';

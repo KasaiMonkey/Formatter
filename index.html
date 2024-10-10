@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Copy Code to Clipboard with Non-Breaking Spaces</title>
+    <title>Copy Code to Clipboard with Tabs Preserved</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,6 +25,11 @@
             color: green;
             display: none; /* Hide the notification initially */
         }
+        #errorNotification {
+            margin-top: 10px;
+            color: red;
+            display: none; /* Hide error notification initially */
+        }
         textarea {
             width: 100%;
             height: 100px; /* Adjust height as needed */
@@ -33,95 +38,61 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             font-family: monospace; /* Use monospace font for better code display */
-        }
-        /* Loading screen styles */
-        #loadingScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            color: #333;
-            z-index: 9999;
-            display: none; /* Hidden initially */
+            white-space: pre; /* Ensures tabs and spaces are preserved */
         }
     </style>
 </head>
 <body>
 
     <h1>Masaya's Code Snippet To HTML Converter</h1>
-    <h2>Version 0.3</h2>
+    <h2>Version 0.6</h2>
     
     <!-- Input Field -->
     <textarea id="inputField" placeholder="Type/Paste your code here..."></textarea>
     
-    <button id="replaceButton">Convert To Tab Spaces &nbsp;</button>
     <button id="copyButton">Convert Code To HTML</button>
     <div id="notification">Text copied to clipboard!</div> <!-- Notification message -->
-
-    <!-- Loading screen -->
-    <div id="loadingScreen">Loading...</div>
+    <div id="errorNotification">Error: Unable to fetch start or end lines. Please check the URLs.</div> <!-- Error message -->
 
     <script>
-        // Show loading screen
-        function showLoading() {
-            document.getElementById('loadingScreen').style.display = 'flex';
-        }
+        document.getElementById('copyButton').addEventListener('click', function() {
+            // URLs for the online start and end parts
+            var startURL = 'https://kasaimonkey.github.io/Formatter/start-lines.txt';
+            var endURL = 'https://kasaimonkey.github.io/Formatter/end-lines.txt';
 
-        // Hide loading screen
-        function hideLoading() {
-            document.getElementById('loadingScreen').style.display = 'none';
-        }
+            // Fetch the start and end lines
+            Promise.all([fetch(startURL).then(res => res.text()), fetch(endURL).then(res => res.text())])
+                .then(([startLines, endLines]) => {
+                    // Get the text from the input field
+                    var inputText = document.getElementById('inputField').value;
 
-        // Function to fetch content from an external file
-        async function fetchContent(url) {
-            showLoading(); // Show loading screen
-            const response = await fetch(url);
-            const text = await response.text();
-            hideLoading(); // Hide loading screen
-            return text;
-        }
+                    // Create a temporary textarea element to help copy the text
+                    var tempTextArea = document.createElement("textarea");
+                    // Concatenate the start lines, input text, and end lines with a line break
+                    tempTextArea.value = startLines + inputText + '\n' + endLines;
 
-        document.getElementById('replaceButton').addEventListener('click', function() {
-            // Get the text from the input field
-            var inputText = document.getElementById('inputField').value;
+                    // Append the textarea to the body, copy its content, and then remove it
+                    document.body.appendChild(tempTextArea);
+                    tempTextArea.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(tempTextArea);
 
-            // Replace tabs with &nbsp; and spaces with &nbsp;
-            var replacedText = inputText.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;') // Replace each tab with four &nbsp;
-                                          .replace(/ /g, '&nbsp;'); // Replace spaces with &nbsp;
+                    // Show notification when copied
+                    var notification = document.getElementById('notification');
+                    notification.style.display = 'block';
+                    notification.textContent = "Text copied to clipboard!";
 
-            // Update the input field with the replaced text
-            document.getElementById('inputField').value = replacedText;
-        });
+                    // Hide error notification if it was previously shown
+                    document.getElementById('errorNotification').style.display = 'none';
+                })
+                .catch(error => {
+                    console.error("Error fetching start or end lines:", error);
 
-        document.getElementById('copyButton').addEventListener('click', async function() {
-            // Fetch start and end lines from online files
-            const startLines = await fetchContent('https://kasaimonkey.github.io/Formatter/start-lines.txt');
-            const endLines = await fetchContent('https://kasaimonkey.github.io/Formatter/end-lines.txt');
-
-            // Get the user input from the input field
-            const userInput = document.getElementById('inputField').value;
-
-            // Combine start lines, user input, and end lines
-            const fullHTML = startLines + '\n' + userInput + '\n' + endLines;
-
-            // Create a temporary textarea element to help copy the text
-            const tempTextArea = document.createElement("textarea");
-            tempTextArea.value = fullHTML;
-            document.body.appendChild(tempTextArea); // Append it to the body
-            tempTextArea.select(); // Select the text
-            document.execCommand("copy"); // Execute the copy command
-            document.body.removeChild(tempTextArea); // Remove the temporary textarea
-
-            // Show notification when copied
-            var notification = document.getElementById('notification');
-            notification.style.display = 'block'; // Show the notification
-            notification.textContent = "Text copied to clipboard!";
+                    // Show error notification
+                    var errorNotification = document.getElementById('errorNotification');
+                    errorNotification.style.display = 'block';
+                    errorNotification.textContent = "Error: Unable to fetch start or end lines. Please check the URLs.";
+                });
         });
     </script>
 

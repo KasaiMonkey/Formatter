@@ -39,6 +39,7 @@
 <body>
 
     <h1>Masaya's Code Snippet To HTML Converter</h1>
+    <h2>Version 0.1a</h2>
     
     <!-- Input Field -->
     <textarea id="inputField" placeholder="Type/Paste your code here..."></textarea>
@@ -63,6 +64,7 @@
         document.getElementById('copyButton').addEventListener('click', function() {
             // Variables for the lines to copy
             var lineToCopy = `<link rel="stylesheet" href="https://kasaimonkey.github.io/Formatter/MasayaStyle.css">`;
+	    var lineToCopy1 = `<link rel="stylesheet" href="https://kasaimonkey.github.io/Formatter/MasayaLineStyle.css">`;
             var lineToCopy2 = `<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></scr`;
             var lineToCopy2b = 'ipt>';
             var lineToCopy3 = '<pre><code class="language-C#">';
@@ -83,7 +85,7 @@
 
             // Create a temporary textarea element to help copy the text
             var tempTextArea = document.createElement("textarea");
-            tempTextArea.value = lineToCopy + '\n' + lineToCopy2 + lineToCopy2b + '\n' + 
+            tempTextArea.value = lineToCopy + '\n' + lineToCopy1 + '\n + lineToCopy2 + lineToCopy2b + '\n' + 
                                   lineToCopy3 + inputText + '\n' +
                                   endLine1 + '\n' +
                                   endLine2 + endLine2b + '\n' +
